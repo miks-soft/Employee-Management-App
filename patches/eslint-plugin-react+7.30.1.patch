@@ -1,0 +1,42 @@
+diff --git a/node_modules/eslint-plugin-react/lib/rules/jsx-sort-props.js b/node_modules/eslint-plugin-react/lib/rules/jsx-sort-props.js
+index ea2e8c8..d10427a 100644
+--- a/node_modules/eslint-plugin-react/lib/rules/jsx-sort-props.js
++++ b/node_modules/eslint-plugin-react/lib/rules/jsx-sort-props.js
+@@ -16,7 +16,7 @@ const report = require('../util/report');
+ // ------------------------------------------------------------------------------
+ 
+ function isCallbackPropName(name) {
+-  return /^on[A-Z]/.test(name);
++  return /((^(on|set)[A-Z])|([a-z]Extractor$))/.test(name) || ArrowCallbacksInsideBlockStatementNames.indexOf(name) !== -1;
+ }
+ 
+ function isMultilineProp(node) {
+@@ -269,6 +269,8 @@ function reportNodeAttribute(nodeAttribute, errorType, node, context, reservedLi
+   });
+ }
+ 
++let ArrowCallbacksInsideBlockStatementNames = [];
++
+ module.exports = {
+   meta: {
+     docs: {
+@@ -322,6 +324,7 @@ module.exports = {
+   },
+ 
+   create(context) {
++    ArrowCallbacksInsideBlockStatementNames = [];
+     const configuration = context.options[0] || {};
+     const ignoreCase = configuration.ignoreCase || false;
+     const callbacksLast = configuration.callbacksLast || false;
+@@ -335,6 +338,11 @@ module.exports = {
+     const locale = configuration.locale || 'auto';
+ 
+     return {
++      "VariableDeclaration[parent.type='BlockStatement']": function(s) {
++        if (s.declarations[0]?.init?.type === 'ArrowFunctionExpression') {
++          ArrowCallbacksInsideBlockStatementNames.push(s.declarations[0]?.id?.name);
++        }
++      },
+       JSXOpeningElement(node) {
+         // `dangerouslySetInnerHTML` is only "reserved" on DOM components
+         if (reservedFirst && !jsxUtil.isDOMComponent(node)) {

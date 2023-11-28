@@ -1,0 +1,14 @@
+diff --git a/node_modules/react-hot-toast/src/core/utils.ts b/node_modules/react-hot-toast/src/core/utils.ts
+index f57160f..dd571b3 100644
+--- a/node_modules/react-hot-toast/src/core/utils.ts
++++ b/node_modules/react-hot-toast/src/core/utils.ts
+@@ -10,7 +10,9 @@ export const prefersReducedMotion = (() => {
+   let shouldReduceMotion: boolean | undefined = undefined;
+ 
+   return () => {
++    //@ts-expect-error
+     if (shouldReduceMotion === undefined && typeof window !== 'undefined') {
++      //@ts-expect-error
+       const mediaQuery = matchMedia('(prefers-reduced-motion: reduce)');
+       shouldReduceMotion = !mediaQuery || mediaQuery.matches;
+     }

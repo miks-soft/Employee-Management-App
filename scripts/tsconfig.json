@@ -1,0 +1,10 @@
+{
+  "extends": "@tsconfig/react-native/tsconfig.json",     /* Recommended React Native TSConfig base */
+  "compilerOptions": {
+    "lib": ["ES2021"],
+    "types": ["node"],    
+    "module": "ES6",
+    "target": "es5",    
+    "skipLibCheck": true                               
+  }
+}

@@ -1,0 +1,72 @@
+diff --git a/node_modules/react-native/Libraries/ReactNative/AppRegistry.js b/node_modules/react-native/Libraries/ReactNative/AppRegistry.js
+index 45c08d4..a0f23aa 100644
+--- a/node_modules/react-native/Libraries/ReactNative/AppRegistry.js
++++ b/node_modules/react-native/Libraries/ReactNative/AppRegistry.js
+@@ -290,7 +290,7 @@ const AppRegistry = {
+    *
+    * See https://reactnative.dev/docs/appregistry#startheadlesstask
+    */
+-  startHeadlessTask(taskId: number, taskKey: string, data: any): void {
++  async startHeadlessTask(taskId: number, taskKey: string, data: any): void {
+     const taskProvider = taskProviders.get(taskKey);
+     if (!taskProvider) {
+       console.warn(`No task registered for key ${taskKey}`);
+@@ -299,28 +299,28 @@ const AppRegistry = {
+       }
+       return;
+     }
+-    taskProvider()(data)
+-      .then(() => {
+-        if (NativeHeadlessJsTaskSupport) {
+-          NativeHeadlessJsTaskSupport.notifyTaskFinished(taskId);
+-        }
+-      })
+-      .catch(reason => {
+-        console.error(reason);
+-
+-        if (
+-          NativeHeadlessJsTaskSupport &&
+-          reason instanceof HeadlessJsTaskError
+-        ) {
+-          NativeHeadlessJsTaskSupport.notifyTaskRetry(taskId).then(
+-            retryPosted => {
+-              if (!retryPosted) {
+-                NativeHeadlessJsTaskSupport.notifyTaskFinished(taskId);
+-              }
+-            },
+-          );
+-        }
+-      });
++    try {
++      await taskProvider()(data)
++
++      if (NativeHeadlessJsTaskSupport) {
++        NativeHeadlessJsTaskSupport.notifyTaskFinished(taskId);
++      }
++    } catch {
++      console.error(reason);
++
++      if (
++        NativeHeadlessJsTaskSupport &&
++        reason instanceof HeadlessJsTaskError
++      ) {
++        NativeHeadlessJsTaskSupport.notifyTaskRetry(taskId).then(
++          retryPosted => {
++            if (!retryPosted) {
++              NativeHeadlessJsTaskSupport.notifyTaskFinished(taskId);
++            }
++          },
++        );
++      }
++    }
+   },
+ 
+   /**
+diff --git a/node_modules/react-native/scripts/.packager.env b/node_modules/react-native/scripts/.packager.env
+new file mode 100644
+index 0000000..21a13cf
+--- /dev/null
++++ b/node_modules/react-native/scripts/.packager.env
+@@ -0,0 +1 @@
++export RCT_METRO_PORT=8081
+\ No newline at end of file

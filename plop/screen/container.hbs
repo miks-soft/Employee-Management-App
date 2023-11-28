@@ -1,0 +1,33 @@
+import React from 'react';
+
+import { AuthScreenProps } from '#navigation/Auth/types';
+
+import Layout from './layout';
+
+type NavigationProps = AuthScreenProps;
+
+const Container: React.FC<NavigationProps> = props => {
+  return (
+    <Layout
+      /**
+       *Options
+       */
+
+      /**
+       *Methods
+       */
+      {...props}
+    />
+  );
+};
+
+type PassingStates = {};
+
+type PassingProps = {};
+
+export type ViewProps = NavigationProps &
+  PassingStates &
+  getSetStateProps<PassingStates> &
+  PassingProps;
+
+export default Container;
